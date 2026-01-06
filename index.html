@@ -4,49 +4,59 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>To-Do Pulizie</title>
+
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f4f4f4;
       padding: 20px;
-      background: #f7f7f7;
+    }
+    h1 {
+      text-align: center;
     }
     h2 {
       margin-top: 30px;
     }
     label {
       display: block;
-      background: #fff;
+      background: white;
       padding: 10px;
       margin: 6px 0;
-      border-radius: 8px;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.2);
     }
   </style>
 </head>
+
 <body>
 
-<h1>To-Do di Oggi</h1>
+<h1>📅 To-Do di Oggi</h1>
 
-<h2>Giornaliere</h2>
+<h2>🔁 Giornaliere</h2>
 <div id="daily"></div>
 
-<h2>Settimanali</h2>
+<h2>🗓️ Settimanali</h2>
 <div id="weekly"></div>
 
-<h2>Mensili</h2>
+<h2>🗂️ Mensili</h2>
 <div id="monthly"></div>
 
-<h2>Straordinarie</h2>
+<h2>🚨 Straordinarie</h2>
 <div id="special"></div>
 
 <script>
 const today = new Date();
 const yyyy = today.getFullYear();
-const mm = today.getMonth();      // 0 = gennaio
-const dd = today.getDay();        // 0 = domenica
+const mm = today.getMonth();     // 0 = gennaio
+const dd = today.getDay();       // 0 = domenica
 const date = today.getDate();
 
 // ---------- FUNZIONE BASE ----------
-function addTask(container, id, text, storageKey) {
+function addTask(container, text, storageKey) {
   if (localStorage.getItem(storageKey) === "done") return;
 
   const label = document.createElement("label");
@@ -58,98 +68,94 @@ function addTask(container, id, text, storageKey) {
   };
 
   label.appendChild(cb);
-  label.append(" " + text);
+  label.append(text);
   container.appendChild(label);
 }
 
 // ---------- GIORNALIERE ----------
 const dailyTasks = [
-  "Arieggiare le stanze",
-  "Rifare i letti",
-  "Svuotare stoviglie",
-  "Passare aspirapolvere",
-  "Riordinare oggetti fuori posto",
-  "Pulizia veloce bagni",
-  "Pulire tavolo",
-  "Pulire piano cucina",
-  "Buttare immondizia"
+  "🌬️ Arieggiare le stanze",
+  "🛏️ Rifare i letti",
+  "🍽️ Svuotare stoviglie",
+  "🧹 Passare aspirapolvere",
+  "🧺 Riordinare oggetti fuori posto",
+  "🚿 Pulizia veloce bagni",
+  "🍽️ Pulire tavolo",
+  "🍳 Pulire piano cucina",
+  "🗑️ Buttare immondizia"
 ];
 
 dailyTasks.forEach((t, i) => {
   addTask(
     document.getElementById("daily"),
-    "daily-" + i,
     t,
-    `daily-${i}-${yyyy}-${mm}-${date}`   // reset ogni giorno
+    `daily-${i}-${yyyy}-${mm}-${date}`
   );
 });
 
 // ---------- SETTIMANALI ----------
 const weeklyTasks = {
-  1: ["Materassi e cambio lenzuola", "Spolverare"],   // Lunedì
-  2: ["Spolverare"],                                 // Martedì
-  3: ["Pavimenti e bagni"],                          // Mercoledì
-  4: ["Bucato"],                                     // Giovedì
-  5: ["Bidoni e tappeti"],                           // Venerdì
-  0: ["Aspirapolvere"]                               // Domenica
+  1: ["🛏️ Materassi e cambio lenzuola", "🪶 Spolverare"],   // Lunedì
+  2: ["🪶 Spolverare"],                                     // Martedì
+  3: ["🚿🧽 Pavimenti e bagni"],                            // Mercoledì
+  4: ["👕 Bucato"],                                        // Giovedì
+  5: ["♻️🧺 Bidoni e tappeti"],                             // Venerdì
+  0: ["🧹 Aspirapolvere"]                                  // Domenica
 };
 
 if (weeklyTasks[dd]) {
   weeklyTasks[dd].forEach((t, i) => {
     addTask(
       document.getElementById("weekly"),
-      "weekly-" + i,
       t,
-      `weekly-${t}-${yyyy}-${mm}-${date}`   // reset giornaliero
+      `weekly-${t}-${yyyy}-${mm}-${date}`
     );
   });
 }
 
 // ---------- MENSILI ----------
 const monthlyTasks = [
-  "Frigo",
-  "Forno e microonde",
-  "Lavastoviglie e cappa",
-  "Lavatrice e asciugatrice",
-  "Pulizia profonda aspirapolvere",
-  "Vetri",
-  "Battiscopa",
-  "Porte",
-  "Interruttori",
-  "Giardino"
+  "❄️ Frigo",
+  "🔥 Forno e microonde",
+  "🍽️💨 Lavastoviglie e cappa",
+  "👕🔄 Lavatrice e asciugatrice",
+  "🧹✨ Pulizia profonda aspirapolvere",
+  "🪟 Vetri",
+  "📏 Battiscopa",
+  "🚪 Porte",
+  "🔘 Interruttori",
+  "🌿 Giardino"
 ];
 
 monthlyTasks.forEach((t, i) => {
   addTask(
     document.getElementById("monthly"),
-    "monthly-" + i,
     t,
-    `monthly-${t}-${yyyy}-${mm}`   // reset ogni mese
+    `monthly-${t}-${yyyy}-${mm}`
   );
 });
 
 // ---------- STRAORDINARIE ----------
 const specialTasks = [
-  { task: "Scarichi", months: [0,5,10] },
-  { task: "Mobili sotto e dietro", months: [1,5,9] },
-  { task: "Decalcificazione macchina caffè e bollitore", months: [1,6,11] },
-  { task: "Interno dei cassetti", months: [0,4,8] },
-  { task: "Termosifoni e condizionatori", months: [4,9] },
-  { task: "Soffitto e pareti", months: [2,6,10] },
-  { task: "Spolverare in alto", months: [3,7,11] },
-  { task: "Pavimento giardino", months: [3,7] },
-  { task: "Ordinare giardino", months: [2,6,10] },
-  { task: "Cambio stagione", months: [3,9] },
-  { task: "Marciapiede e muri esterni", months: [0,8] }
+  { task: "🚰 Scarichi", months: [0,5,10] },
+  { task: "🛋️ Mobili sotto e dietro", months: [1,5,9] },
+  { task: "☕🫖 Decalcificazione macchina caffè e bollitore", months: [1,6,11] },
+  { task: "🗄️ Interno dei cassetti", months: [0,4,8] },
+  { task: "♨️❄️ Termosifoni e condizionatori", months: [4,9] },
+  { task: "🏠 Soffitto e pareti", months: [2,6,10] },
+  { task: "📦 Spolverare in alto", months: [3,7,11] },
+  { task: "🌱 Pavimento giardino", months: [3,7] },
+  { task: "🌳 Ordinare giardino", months: [2,6,10] },
+  { task: "👚 Cambio stagione", months: [3,9] },
+  { task: "🧱 Marciapiede e muri esterni", months: [0,8] }
 ];
 
 specialTasks.forEach(s => {
   if (s.months.includes(mm)) {
     addTask(
       document.getElementById("special"),
-      "special-" + s.task,
       s.task,
-      `special-${s.task}-${yyyy}-${mm}`   // reset ogni mese
+      `special-${s.task}-${yyyy}-${mm}`
     );
   }
 });
