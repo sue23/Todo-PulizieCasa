@@ -53,28 +53,37 @@ const today = new Date();
 const yyyy = today.getFullYear();
 const mm = today.getMonth();
 const date = today.getDate();
+const day = today.getDay();
+
 const dayNames = ["Domenica","Lunedì","Martedì","Mercoledì","Giovedì","Venerdì","Sabato"];
 
+// 🔗 COLLEGAMENTO AI DIV
+const dailyDiv = document.getElementById("daily");
+const weeklyDiv = document.getElementById("weekly");
+const monthlyDiv = document.getElementById("monthly");
+const specialDiv = document.getElementById("special");
+
+// ---------- FUNZIONE TASK ----------
 function addTask(container, text, key, suggestedDay=null) {
   if (localStorage.getItem(key)==="done") return;
 
-  const label=document.createElement("label");
-  const cb=document.createElement("input");
-  cb.type="checkbox";
-  cb.onchange=()=>localStorage.setItem(key,"done");
+  const label = document.createElement("label");
+  const cb = document.createElement("input");
+  cb.type = "checkbox";
+
+  cb.onchange = () => localStorage.setItem(key,"done");
 
   label.appendChild(cb);
   label.append(text);
 
   if (suggestedDay) {
     const d = new Date(yyyy, mm, suggestedDay);
-    const badgeText = `(${suggestedDay} – ${dayNames[d.getDay()]})`;
-    label.append(" "+badgeText);
+    label.append(` (${suggestedDay} – ${dayNames[d.getDay()]})`);
 
-    if (date===suggestedDay) {
-      const badge=document.createElement("span");
-      badge.className="badge";
-      badge.textContent="⭐ Consigliato oggi";
+    if (date === suggestedDay) {
+      const badge = document.createElement("span");
+      badge.className = "badge";
+      badge.textContent = "⭐ Consigliato oggi";
       label.appendChild(badge);
     }
   }
@@ -82,65 +91,70 @@ function addTask(container, text, key, suggestedDay=null) {
   container.appendChild(label);
 }
 
-/* GIORNALIERE */
+// ---------- GIORNALIERE ----------
 [
-"🌬️ Arieggiare le stanze",
-"🛏️ Rifare i letti",
-"🍽️ Svuotare stoviglie",
-"🧹 Passare aspirapolvere",
-"🧺 Riordinare oggetti fuori posto",
-"🚿 Pulizia veloce bagni",
-"🍽️ Pulire tavolo",
-"🍳 Pulire piano cucina",
-"🗑️ Buttare immondizia"
-].forEach((t,i)=>addTask(daily,t,`d-${i}-${date}`));
+ "🌬️ Arieggiare le stanze",
+ "🛏️ Rifare i letti",
+ "🍽️ Svuotare stoviglie",
+ "🧹 Passare aspirapolvere",
+ "🧺 Riordinare oggetti fuori posto",
+ "🚿 Pulizia veloce bagni",
+ "🍽️ Pulire tavolo",
+ "🍳 Pulire piano cucina",
+ "🗑️ Buttare immondizia"
+].forEach((t,i)=>
+  addTask(dailyDiv, t, `daily-${i}-${yyyy}-${mm}-${date}`)
+);
 
-/* SETTIMANALI */
-const weekly={
-1:["🛏️ Materassi e cambio lenzuola","🪶 Spolverare"],
-2:["🪶 Spolverare"],
-3:["🚿🧽 Pavimenti e bagni"],
-4:["👕 Bucato"],
-5:["♻️🧺 Bidoni e tappeti"],
-0:["🧹 Aspirapolvere"]
+// ---------- SETTIMANALI ----------
+const weekly = {
+  1:["🛏️ Materassi e cambio lenzuola","🪶 Spolverare"],
+  2:["🪶 Spolverare"],
+  3:["🚿🧽 Pavimenti e bagni"],
+  4:["👕 Bucato"],
+  5:["♻️🧺 Bidoni e tappeti"],
+  0:["🧹 Aspirapolvere"]
 };
-if (weekly[today.getDay()]) {
-  weekly[today.getDay()].forEach(t=>addTask(weeklyDiv,t,`w-${t}-${date}`));
+
+if (weekly[day]) {
+  weekly[day].forEach(t =>
+    addTask(weeklyDiv, t, `weekly-${t}-${yyyy}-${mm}-${date}`)
+  );
 }
 
-/* MENSILI */
-const monthlyTasks=[
-["❄️ Frigo",5],
-["🔥 Forno e microonde",7],
-["🍽️💨 Lavastoviglie e cappa",10],
-["👕🔄 Lavatrice e asciugatrice",12],
-["🧹✨ Pulizia profonda aspirapolvere",15],
-["🪟 Vetri",18],
-["📏 Battiscopa",20],
-["🚪 Porte",22],
-["🔘 Interruttori",25],
-["🌿 Giardino",28]
-];
-monthlyTasks.forEach(t=>addTask(monthly,t[0],`m-${t[0]}-${mm}`,t[1]));
+// ---------- MENSILI ----------
+[
+ ["❄️ Frigo",5],
+ ["🔥 Forno e microonde",7],
+ ["🍽️💨 Lavastoviglie e cappa",10],
+ ["👕🔄 Lavatrice e asciugatrice",12],
+ ["🧹✨ Pulizia profonda aspirapolvere",15],
+ ["🪟 Vetri",18],
+ ["📏 Battiscopa",20],
+ ["🚪 Porte",22],
+ ["🔘 Interruttori",25],
+ ["🌿 Giardino",28]
+].forEach(t =>
+  addTask(monthlyDiv, t[0], `monthly-${t[0]}-${yyyy}-${mm}`, t[1])
+);
 
-/* STRAORDINARIE */
-const specialTasks=[
-["🚰 Scarichi",[0,5,10],10],
-["🛋️ Mobili sotto e dietro",[1,5,9],15],
-["☕🫖 Decalcificazione macchina caffè e bollitore",[1,6,11],5],
-["🗄️ Interno dei cassetti",[0,4,8],20],
-["♨️❄️ Termosifoni e condizionatori",[4,9],10],
-["🏠 Soffitto e pareti",[2,6,10],18],
-["📦 Spolverare in alto",[3,7,11],8],
-["🌱 Pavimento giardino",[3,7],22],
-["🌳 Ordinare giardino",[2,6,10],15],
-["👚 Cambio stagione",[3,9],5],
-["🧱 Marciapiede e muri esterni",[0,8],12]
-];
-
-specialTasks.forEach(t=>{
-  if (t[1].includes(mm))
-    addTask(special,t[0],`s-${t[0]}-${mm}`,t[2]);
+// ---------- STRAORDINARIE ----------
+[
+ ["🚰 Scarichi",[0,5,10],10],
+ ["🛋️ Mobili sotto e dietro",[1,5,9],15],
+ ["☕🫖 Decalcificazione macchina caffè e bollitore",[1,6,11],5],
+ ["🗄️ Interno dei cassetti",[0,4,8],20],
+ ["♨️❄️ Termosifoni e condizionatori",[4,9],10],
+ ["🏠 Soffitto e pareti",[2,6,10],18],
+ ["📦 Spolverare in alto",[3,7,11],8],
+ ["🌱 Pavimento giardino",[3,7],22],
+ ["🌳 Ordinare giardino",[2,6,10],15],
+ ["👚 Cambio stagione",[3,9],5],
+ ["🧱 Marciapiede e muri esterni",[0,8],12]
+].forEach(t => {
+  if (t[1].includes(mm)) {
+    addTask(specialDiv, t[0], `special-${t[0]}-${yyyy}-${mm}`, t[2]);
+  }
 });
 </script>
 
